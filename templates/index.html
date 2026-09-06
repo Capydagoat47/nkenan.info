@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#03060b">
+  <title>Kenan Novruzov</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+  <style>
+    :root {
+      --bg-1: #03060b;
+      --bg-2: #08111c;
+      --surface: rgba(8, 13, 21, 0.88);
+      --surface-strong: rgba(11, 17, 28, 0.96);
+      --ink: #eaf2ff;
+      --muted: #8ea2bc;
+      --blue: #5ca0ff;
+      --blue-soft: rgba(92, 160, 255, 0.14);
+      --line: rgba(92, 160, 255, 0.16);
+      --line-strong: rgba(92, 160, 255, 0.34);
+      --shadow: 0 24px 90px rgba(0, 0, 0, 0.54);
+      --radius: 6px;
+      --profile-width: min(35vw, 470px);
+      --content-width: min(50vw, 680px);
+      --rail-width: 74px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(92, 160, 255, 0.14), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(92, 160, 255, 0.08), transparent 28%),
+        linear-gradient(145deg, var(--bg-1), var(--bg-2));
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        linear-gradient(90deg, rgba(92, 160, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(92, 160, 255, 0.05) 1px, transparent 1px);
+      background-size: 64px 64px, 64px 64px;
+      opacity: 0.3;
+      mask-image: radial-gradient(circle at center, black 0%, black 66%, transparent 100%);
+    }
+
+    body::after {
+      background:
+        linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%),
+        repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 6px);
+      opacity: 0.1;
+      mix-blend-mode: screen;
+    }
+
+    .holo {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .holo-core {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      width: min(72vw, 860px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, rgba(92, 160, 255, 0.22) 0%, rgba(92, 160, 255, 0.08) 16%, transparent 52%),
+        radial-gradient(circle at center, rgba(255, 37, 110, 0.05) 0%, transparent 34%);
+      filter: blur(0.5px);
+      opacity: 0.88;
+    }
+
+    .holo-ring {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 1px solid rgba(92, 160, 255, 0.16);
+      box-shadow: inset 0 0 20px rgba(92, 160, 255, 0.05);
+      animation: spin 24s linear infinite;
+    }
+
+    .holo-ring.one {
+      width: min(58vw, 700px);
+      height: min(58vw, 700px);
+    }
+
+    .holo-ring.two {
+      width: min(42vw, 520px);
+      height: min(42vw, 520px);
+      animation-direction: reverse;
+      animation-duration: 18s;
+    }
+
+    .holo-ring.three {
+      width: min(24vw, 300px);
+      height: min(24vw, 300px);
+      border-color: rgba(92, 160, 255, 0.22);
+      animation-duration: 12s;
+    }
+
+    .holo-arc,
+    .holo-beam {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 0 18px rgba(92, 160, 255, 0.16));
+    }
+
+    .holo-arc {
+      width: min(76vw, 980px);
+      height: min(76vw, 980px);
+      border-radius: 50%;
+      border: 1px solid rgba(92, 160, 255, 0.06);
+      clip-path: polygon(14% 54%, 30% 38%, 38% 42%, 50% 32%, 62% 42%, 70% 38%, 86% 54%, 70% 69%, 62% 65%, 50% 76%, 38% 65%, 30% 69%);
+      animation: drift 16s ease-in-out infinite;
+    }
+
+    .holo-beam {
+      width: min(64vw, 760px);
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(92, 160, 255, 0.18) 16%, rgba(92, 160, 255, 0.72) 50%, rgba(92, 160, 255, 0.18) 84%, transparent 100%);
+      top: 47%;
+      animation: pulse 4.5s ease-in-out infinite;
+    }
+
+    .holo-scan {
+      position: absolute;
+      inset: -18% 0 auto;
+      height: 26vh;
+      background: linear-gradient(180deg, transparent 0%, rgba(92, 160, 255, 0.14) 50%, transparent 100%);
+      filter: blur(3px);
+      animation: sweep 8.2s linear infinite;
+      opacity: 0.55;
+    }
+
+    .holo-points {
+      position: absolute;
+      inset: 0;
+    }
+
+    .dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(92, 160, 255, 0.85);
+      box-shadow: 0 0 16px rgba(92, 160, 255, 0.22);
+      opacity: 0.5;
+      animation: twinkle 4s ease-in-out infinite;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 10px 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .frame {
+      width: min(1050px, calc(100vw - 120px));
+      display: flex;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .rail {
+      width: var(--rail-width);
+      flex: 0 0 var(--rail-width);
+      padding-top: 96px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .rail-nav {
+      width: 100%;
+      overflow: hidden;
+      background: rgba(8, 13, 21, 0.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .rail-nav button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      min-height: 52px;
+      padding: 8px 8px 6px;
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      font-weight: 700;
+    }
+
+    .rail-nav button:last-child {
+      border-bottom: 0;
+    }
+
+    .rail-nav button:hover,
+    .rail-nav button:focus-visible {
+      background: rgba(92, 160, 255, 0.08);
+      transform: translateX(2px);
+      outline: none;
+    }
+
+    .rail-nav button.active {
+      background: linear-gradient(135deg, rgba(92, 160, 255, 0.12), rgba(92, 160, 255, 0.06));
+      color: #fff;
+    }
+
+    .rail-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+      width: 1.2rem;
+      text-align: center;
+    }
+
+    .rail-label {
+      font-size: 0.76rem;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      gap: 16px;
+      min-width: 0;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .profile-card,
+    .content-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .profile-card {
+      width: var(--profile-width);
+      flex: 0 0 var(--profile-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 500px;
+      overflow: visible;
+    }
+
+    .banner {
+      height: 200px;
+      background:
+        linear-gradient(180deg, rgba(16, 24, 20, 0.08), rgba(16, 24, 20, 0.22)),
+        url("{{ url_for('static', filename='fridaypfp.png') }}") center/cover no-repeat;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(92, 160, 255, 0.12);
+      border-bottom-left-radius: 48% 18%;
+      border-bottom-right-radius: 48% 18%;
+    }
+
+    .banner img {
+      display: none;
+    }
+
+    .banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(5, 8, 12, 0.03), rgba(5, 8, 12, 0.42)),
+        radial-gradient(circle at 50% 22%, rgba(92, 160, 255, 0.15), transparent 40%);
+      pointer-events: none;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      left: 50%;
+      transform: translate(-50%, -60px);
+      width: 146px;
+      height: 146px;
+      padding: 7px;
+      border-radius: 12px;
+      background: rgba(8, 14, 22, 0.96);
+      border: 1px solid rgba(92, 160, 255, 0.22);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.36);
+      z-index: 2;
+      margin-bottom: -108px;
+    }
+
+    .avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .profile-body {
+      padding: 0 24px 14px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .name {
+      margin-top: 64px;
+      font-size: clamp(1.5rem, 2.2vw, 2.15rem);
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--blue);
+      font-size: 1.05rem;
+      min-height: 1.3em;
+    }
+
+    .typing {
+      display: inline-block;
+      border-right: 2px solid rgba(92, 160, 255, 0.9);
+      white-space: nowrap;
+      overflow: hidden;
+      animation: caret 0.9s steps(1) infinite;
+      vertical-align: bottom;
+    }
+
+    @keyframes caret {
+      50% {
+        border-color: transparent;
+      }
+    }
+
+    .socials {
+      margin: 12px 0 0;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 0.98rem;
+      flex-wrap: wrap;
+    }
+
+    .socials span {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+    }
+
+    .profile-meta {
+      margin: 12px auto 0;
+      display: grid;
+      gap: 8px;
+      max-width: 440px;
+      text-align: left;
+    }
+
+    .meta-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.3;
+    }
+
+    .meta-line i {
+      width: 1.2rem;
+      color: var(--blue);
+      flex: 0 0 1.2rem;
+      text-align: center;
+      font-size: 1.05rem;
+      font-style: normal;
+    }
+
+    .profile-actions {
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      background: var(--surface-strong);
+    }
+
+    .works-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 20px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .works-button:hover,
+    .works-button:focus-visible {
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .works-button .arrow {
+      font-size: 1.1rem;
+      color: var(--blue);
+    }
+
+    .content-card {
+      width: var(--content-width);
+      flex: 1 1 var(--content-width);
+      min-width: 0;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      background: rgba(8, 13, 21, 0.9);
+    }
+
+    .content-window {
+      height: 500px;
+      overflow: hidden;
+      min-height: 0;
+      position: relative;
+    }
+
+    .content-strip {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      background: rgba(8, 13, 21, 0.28);
+      opacity: 0;
+      transform: translateX(12px);
+      pointer-events: none;
+      transition: opacity 0.24s ease, transform 0.24s ease;
+    }
+
+    .page.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .page h2 {
+      margin: 0;
+      font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+    }
+
+    .page h2 span {
+      color: var(--blue);
+    }
+
+    .page p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(6, 10, 16, 0.36);
+      margin-top: auto;
+    }
+
+    .fact-card {
+      padding: 16px 8px 14px;
+      text-align: center;
+      border-right: 1px solid var(--line);
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+
+    .fact-card:last-child {
+      border-right: 0;
+    }
+
+    .fact-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(92, 160, 255, 0.12);
+      color: var(--blue);
+      font-size: 1rem;
+    }
+
+    .fact-value {
+      margin: 0;
+      font-size: 1.06rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .info-box,
+    .tile,
+    .contact-line {
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(8, 13, 21, 0.72);
+    }
+
+    .info-box {
+      padding: 14px 14px 16px;
+    }
+
+    .info-box strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .info-box span {
+      color: var(--muted);
+    }
+
+    .project-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tile {
+      padding: 14px;
+      min-height: 118px;
+    }
+
+    .tile h3 {
+      margin: 0 0 12px;
+      font-size: 1.12rem;
+      color: var(--ink);
+    }
+
+    .tile p {
+      font-size: 0.95rem;
+    }
+
+    .contact-card {
+      min-height: 100%;
+      display: grid;
+      align-content: start;
+      gap: 14px;
+    }
+
+    .contact-line {
+      padding: 12px 14px;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      margin-top: auto;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @keyframes spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.015); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 0.95; }
+    }
+
+    @keyframes sweep {
+      0% { transform: translateY(-34vh); }
+      100% { transform: translateY(132vh); }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.35; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.12); }
+    }
+
+    @media (max-width: 1180px) {
+      body {
+        overflow: auto;
+      }
+
+      .app {
+        padding: 14px;
+      }
+
+      .frame {
+        width: 100%;
+        min-height: calc(100vh - 28px);
+        flex-direction: column;
+      }
+
+      .rail {
+        width: 100%;
+        flex: 0 0 auto;
+        padding-top: 0;
+      }
+
+      .rail-nav {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .rail-nav button {
+        border-bottom: 0;
+        border-right: 1px solid rgba(92, 160, 255, 0.08);
+        min-height: 64px;
+      }
+
+      .rail-nav button:last-child {
+        border-right: 0;
+      }
+
+      .main {
+        flex-direction: column;
+      }
+
+      .profile-card,
+      .content-card {
+        width: 100%;
+        flex: 1 1 auto;
+      }
+
+      .profile-card {
+        border-bottom: 1px solid rgba(92, 160, 255, 0.12);
+        border-right: 1px solid var(--line);
+      }
+
+      .content-window {
+        height: auto;
+      }
+
+      .profile-card,
+      .content-card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .profile-card {
+        min-height: auto;
+      }
+
+      .banner {
+        height: 240px;
+      }
+
+      .avatar-wrap {
+        width: 112px;
+        height: 112px;
+        transform: translate(-50%, -98px);
+        margin-bottom: -84px;
+      }
+
+      .profile-body {
+        padding: 0 16px 14px;
+      }
+
+      .name {
+        font-size: 1.8rem;
+      }
+
+      .page {
+        padding: 12px;
+      }
+
+      .facts-grid,
+      .project-grid,
+      .info-row {
+        grid-template-columns: 1fr;
+      }
+
+      .rail-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="holo" aria-hidden="true">
+    <div class="holo-core"></div>
+    <div class="holo-ring one"></div>
+    <div class="holo-ring two"></div>
+    <div class="holo-ring three"></div>
+    <div class="holo-arc"></div>
+    <div class="holo-beam"></div>
+    <div class="holo-scan"></div>
+    <div class="holo-points" id="holoPoints"></div>
+  </div>
+
+  <main class="app">
+    <div class="frame">
+      <aside class="rail" aria-label="Sections">
+        <nav class="rail-nav">
+          <button class="active" type="button" data-page="about" aria-label="About">
+            <span class="rail-icon"><i class="fa-solid fa-user"></i></span>
+            <span class="rail-label">About</span>
+          </button>
+          <button type="button" data-page="projects" aria-label="Projects">
+            <span class="rail-icon"><i class="fa-solid fa-folder-open"></i></span>
+            <span class="rail-label">Projects</span>
+          </button>
+          <button type="button" data-page="media" aria-label="Media">
+            <span class="rail-icon"><i class="fa-solid fa-image"></i></span>
+            <span class="rail-label">Media</span>
+          </button>
+          <button type="button" data-page="contact" aria-label="Contact">
+            <span class="rail-icon"><i class="fa-solid fa-envelope"></i></span>
+            <span class="rail-label">Contact</span>
+          </button>
+        </nav>
+      </aside>
+
+      <section class="main">
+        <aside class="profile-card">
+          <div class="banner">
+          </div>
+          <div class="avatar-wrap">
+            <img src="{{ url_for('static', filename='nkenanpfp.jpg') }}" alt="Kenan Novruzov profile picture">
+          </div>
+
+          <div class="profile-body">
+            <h1 class="name">Kenan Novruzov</h1>
+            <div class="subtitle"><span class="typing" id="typingText"></span></div>
+            <div class="profile-meta">
+              <div class="meta-line"><i class="fa-solid fa-graduation-cap"></i><span>Sumqayit Public School #1 • Grade 5Ə (2027)</span></div>
+              <div class="meta-line"><i class="fa-solid fa-location-dot"></i><span>Sumqayit, Azerbaijan</span></div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="content-card">
+          <div class="content-window">
+            <div class="content-strip">
+              <div class="page active" data-page-panel="about">
+                <h2><span>About</span></h2>
+                <p>Hi! I'm an 11-year-old developer from Azerbaijan who enjoys building AI and software.
+
+My main project is FRIDAY, a futuristic AI assistant inspired by Marvel. I love programming, learning new technologies, and creating new ideas. My goal is to build powerful AI and software that help people.</p>
+
+                <div class="facts-grid">
+                  <div class="fact-card">
+                    <div class="fact-icon"><i class="fa-solid fa-code"></i></div>
+                    <p class="fact-value">1 year coding</p>
+                  </div>
+                  <div class="fact-card">
+                    <div class="fact-icon"><i class="fa-solid fa-certificate"></i></div>
+                    <p class="fact-value">25 certificates</p>
+                  </div>
+                  <div class="fact-card">
+                    <div class="fact-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <p class="fact-value">+5 skills</p>
+                  </div>
+                  <div class="fact-card">
+                    <div class="fact-icon"><i class="fa-solid fa-language"></i></div>
+                    <p class="fact-value">2 languages</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="page" data-page-panel="projects">
+                <h2><span>Projects</span></h2>
+                <div class="project-grid">
+                  <div class="tile">
+                    <h3>F.R.I.D.A.Y</h3>
+                    <p>A futuristic AI assistant inspired by Marvel, designed with voice interaction and web search to make everyday tasks easier.</p>
+                  </div>
+                  <div class="tile">
+                    <h3>NKSlides</h3>
+                    <p>An educational project created to help teachers quickly build interactive classroom presentations. (Abandoned)</p>
+                  </div>
+                  <div class="tile">
+                    <h3>STT</h3>
+                    <p>A speech-to-text project built to explore voice recognition and AI transcription technologies. (Abandoned)</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="page" data-page-panel="media">
+                <h2><span>Media</span></h2>
+                <p>Placeholder media area for images, clips, or links later on.</p>
+                <div class="project-grid">
+                  <div class="tile">
+                    <h3>Media 01</h3>
+                    <p>Placeholder media item.</p>
+                  </div>
+                  <div class="tile">
+                    <h3>Media 02</h3>
+                    <p>Placeholder media item.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="page" data-page-panel="contact">
+                <h2><span>Contact</span></h2>
+                <div class="contact-card">
+                  <div class="contact-line">Email: chillmancapybaradachill@gmail.com</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const typingText = document.getElementById('typingText');
+    const typingPhrases = [
+      'Student',
+      'Developer',
+      'Tech Enthusiast'
+    ];
+
+    let typingPhraseIndex = 0;
+    let typingCharIndex = 0;
+    let typingDirection = 1;
+
+    function animateTyping() {
+      const phrase = typingPhrases[typingPhraseIndex];
+      typingText.textContent = phrase.slice(0, typingCharIndex);
+      typingCharIndex += typingDirection;
+
+      if (typingDirection === 1 && typingCharIndex > phrase.length) {
+        typingDirection = -1;
+        typingCharIndex = phrase.length;
+        window.setTimeout(animateTyping, 1000);
+        return;
+      }
+
+      if (typingDirection === -1 && typingCharIndex < 0) {
+        typingDirection = 1;
+        typingPhraseIndex = (typingPhraseIndex + 1) % typingPhrases.length;
+        typingCharIndex = 0;
+        window.setTimeout(animateTyping, 300);
+        return;
+      }
+
+      window.setTimeout(animateTyping, typingDirection === 1 ? 95 : 45);
+    }
+
+    animateTyping();
+
+    const navButtons = Array.from(document.querySelectorAll('[data-page]'));
+    const pages = Array.from(document.querySelectorAll('[data-page-panel]'));
+
+    function activatePage(name) {
+      navButtons.forEach((button) => {
+        const active = button.dataset.page === name;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+
+      pages.forEach((page) => {
+        const active = page.dataset.pagePanel === name;
+        page.classList.toggle('active', active);
+        page.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+    }
+
+    navButtons.forEach((button) => {
+      button.addEventListener('click', () => activatePage(button.dataset.page));
+    });
+
+    const holoPoints = document.getElementById('holoPoints');
+    for (let i = 0; i < 18; i += 1) {
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      dot.style.left = (10 + Math.random() * 80).toFixed(2) + '%';
+      dot.style.top = (12 + Math.random() * 70).toFixed(2) + '%';
+      dot.style.animationDelay = (Math.random() * 4).toFixed(2) + 's';
+      dot.style.transform = 'scale(' + (0.7 + Math.random() * 0.8).toFixed(2) + ')';
+      holoPoints.appendChild(dot);
+    }
+  </script>
+</body>
+</html>
